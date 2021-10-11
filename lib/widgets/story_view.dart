@@ -756,7 +756,7 @@ class PageBarState extends State<PageBar> {
     super.initState();
 
     int count = widget.pages.length;
-    spacing = (count > 15) ? 1 : ((count > 10) ? 2 : 4);
+    spacing = (count > 15) ? 2.5 : ((count > 10) ? 5 : 10);
 
     widget.animation!.addListener(() {
       setState(() {});
