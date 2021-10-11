@@ -749,7 +749,7 @@ class PageBar extends StatefulWidget {
 }
 
 class PageBarState extends State<PageBar> {
-  double spacing = 4;
+  double spacing = 10;
 
   @override
   void initState() {
