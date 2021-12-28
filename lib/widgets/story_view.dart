@@ -756,7 +756,11 @@ class PageBarState extends State<PageBar> {
     super.initState();
 
     int count = widget.pages.length;
-    spacing = (count > 15) ? 2.5 : ((count > 10) ? 5 : 10);
+    spacing = (count > 25)
+        ? 2.5
+        : ((count > 15)
+          ? 5
+          : 10);
 
     widget.animation!.addListener(() {
       setState(() {});
@@ -776,19 +780,38 @@ class PageBarState extends State<PageBar> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = [];
+    final width = MediaQuery.of(context).size.width;
+    for(int i=0;i<widget.pages.length;i++){
+      final it = widget.pages[i];
+      bool isLast = widget.pages.last == it;
+      final _child = Container(
+        padding: EdgeInsets.only(
+            right: isLast ? 0 : this.spacing),
+        child: StoryProgressIndicator(
+          isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
+          indicatorHeight:
+          widget.indicatorHeight == IndicatorHeight.large ? 5 : 4,
+        ),
+      );
+
+      double indicatorWidth = width;
+
+      indicatorWidth -= (widget.pages.length-1) * spacing;
+      indicatorWidth -= (widget.pages.length-1) * 4;
+      indicatorWidth -= 40;
+
+      if(indicatorWidth > 103) indicatorWidth = 103;
+      if(indicatorWidth < 0) indicatorWidth = 0;
+
+      final child = isPlaying(it)
+          ? ConstrainedBox(constraints: BoxConstraints(maxWidth: isLast ? indicatorWidth : indicatorWidth + spacing), child: _child)
+          : SizedBox(width: isLast ? 4 : 4 + spacing,child: _child);
+      children.add(child);
+    }
     return Row(
-      children: widget.pages.map((it) {
-        final _child = Container(
-          padding: EdgeInsets.only(
-              right: widget.pages.last == it ? 0 : this.spacing),
-          child: StoryProgressIndicator(
-            isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
-            indicatorHeight:
-            widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
-          ),
-        );
-        return it.shown ? Expanded(child: _child) : _child;
-      }).toList(),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: children,
     );
   }
 }
