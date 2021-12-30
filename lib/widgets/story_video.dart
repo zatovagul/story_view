@@ -19,7 +19,7 @@ class VideoLoader {
 
   VideoLoader(this.url, {this.requestHeaders});
 
-  void loadVideo(VoidCallback onComplete) {
+  void loadVideo(VoidCallback onComplete, {Function(Duration)? getDuration}) {
     if (this.videoFile != null) {
       this.state = LoadState.success;
       onComplete();
@@ -34,6 +34,11 @@ class VideoLoader {
           this.state = LoadState.success;
           this.videoFile = fileResponse.file;
           onComplete();
+          if(getDuration!=null){
+            final controller = VideoPlayerController.file(fileResponse.file);
+            getDuration(controller.value.duration);
+            controller.dispose();
+          }
         }
       }
     });
