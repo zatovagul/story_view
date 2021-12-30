@@ -43,17 +43,19 @@ class VideoLoader {
 class StoryVideo extends StatefulWidget {
   final StoryController? storyController;
   final VideoLoader videoLoader;
+  final BoxFit? fit;
 
-  StoryVideo(this.videoLoader, {this.storyController, Key? key})
+  StoryVideo(this.videoLoader, {this.storyController, Key? key, this.fit})
       : super(key: key ?? UniqueKey());
 
   static StoryVideo url(String url,
       {StoryController? controller,
-      Map<String, dynamic>? requestHeaders,
+      Map<String, dynamic>? requestHeaders, BoxFit? fit,
       Key? key}) {
     return StoryVideo(
       VideoLoader(url, requestHeaders: requestHeaders),
       storyController: controller,
+      fit: fit,
       key: key,
     );
   }
@@ -106,6 +108,18 @@ class StoryVideoState extends State<StoryVideo> {
   Widget getContentView() {
     if (widget.videoLoader.state == LoadState.success &&
         playerController!.value.isInitialized) {
+      if(widget.fit!=null) {
+        return SizedBox.expand(
+          child: FittedBox(
+            fit: widget.fit!,
+            child: SizedBox(
+              width: playerController?.value.size.width ?? 0,
+              height: playerController?.value.size.height ?? 0,
+              child: VideoPlayer(playerController!),
+            ),
+          ),
+        );
+      }
       return Center(
         child: AspectRatio(
           aspectRatio: playerController!.value.aspectRatio,
